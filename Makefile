@@ -16,7 +16,10 @@
 # To install in $HOME instead of /usr/local, use:
 #    make install prefix=$HOME
 
-CC=gcc
+EMSCRIPTEN=~/Dev/emscripten
+EMCC=$(EMSCRIPTEN)/emcc -O2 -s INLINING_LIMIT=0
+CC=$(EMCC)
+# gcc
 
 CFLAGS=-O3 -D_LARGEFILE64_SOURCE=1
 #CFLAGS=-O -DMAX_WBITS=14 -DMAX_MEM_LEVEL=7
@@ -67,7 +70,8 @@ OBJS = $(OBJC) $(OBJA)
 
 PIC_OBJS = $(PIC_OBJC) $(PIC_OBJA)
 
-all: static shared all64
+all: libz.fast.js libz.portable.js
+#static shared all64
 
 static: example$(EXE) minigzip$(EXE)
 
@@ -255,3 +259,14 @@ infback.lo inflate.lo: zutil.h zlib.h zconf.h inftrees.h inflate.h inffast.h inf
 inffast.lo: zutil.h zlib.h zconf.h inftrees.h inflate.h inffast.h
 inftrees.lo: zutil.h zlib.h zconf.h inftrees.h
 trees.lo: deflate.h zutil.h zlib.h zconf.h trees.h
+
+# XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+# Emscripten additions. We build a portable (no typed arrays) and a fast (with typed arrays) build.
+
+libz.fast.js: libz.a
+	$(EMCC) libz.a -o libz.fast.js
+
+libz.portable.js: libz.a
+	$(EMCC) -s USE_TYPED_ARRAYS=0 libz.a -o libz.portable.js
+
