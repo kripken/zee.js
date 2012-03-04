@@ -17,7 +17,7 @@
 #    make install prefix=$HOME
 
 EMSCRIPTEN=~/Dev/emscripten
-EMCC=$(EMSCRIPTEN)/emcc -O2 -s INLINING_LIMIT=0
+EMCC=$(EMSCRIPTEN)/emcc -O2 --closure 0 -s EXPORTED_FUNCTIONS="['compress','uncompress','compressBound']"
 CC=$(EMCC)
 # gcc
 
@@ -66,11 +66,12 @@ PIC_OBJC = adler32.lo compress.lo crc32.lo deflate.lo gzclose.lo gzlib.lo gzread
 OBJA =
 PIC_OBJA =
 
-OBJS = $(OBJC) $(OBJA)
+OBJS = $(OBJC) $(OBJA) empty_main.o
 
 PIC_OBJS = $(PIC_OBJC) $(PIC_OBJA)
 
-all: libz.fast.js libz.portable.js
+all: zee.fast.js
+# libz.portable.js
 #static shared all64
 
 static: example$(EXE) minigzip$(EXE)
@@ -111,9 +112,9 @@ test64: all64
 	fi
 	-@rm -f foo.gz
 
-libz.a: $(OBJS)
-	$(AR) $@ $(OBJS)
-	-@ ($(RANLIB) $@ || true) >/dev/null 2>&1
+libz.bc: $(OBJS)
+	$(EMCC) $(OBJS) -o $@
+	#-@ ($(RANLIB) $@ || true) >/dev/null 2>&1
 
 match.o: match.S
 	$(CPP) match.S > _match.s
@@ -264,9 +265,12 @@ trees.lo: deflate.h zutil.h zlib.h zconf.h trees.h
 
 # Emscripten additions. We build a portable (no typed arrays) and a fast (with typed arrays) build.
 
-libz.fast.js: libz.a
-	$(EMCC) libz.a -o libz.fast.js
+zee.fast.js: libz.bc
+	$(EMCC) libz.bc -o libz.fast.raw.js
+	cat pre.js > zee.fast.js
+	cat libz.fast.raw.js >> zee.fast.js
+	cat post.js >> zee.fast.js
 
-libz.portable.js: libz.a
-	$(EMCC) -s USE_TYPED_ARRAYS=0 libz.a -o libz.portable.js
+#libz.portable.js: libz.bc
+#	$(EMCC) -s USE_TYPED_ARRAYS=0 libz.bc -o libz.portable.js
 
