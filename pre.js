@@ -1,5 +1,5 @@
-var Zee = (function() {
-  var Module = {
-    'noExitRuntime': true
-  };
+
+var Module = {
+  'noExitRuntime': true
+};
 

@@ -17,7 +17,7 @@
 #    make install prefix=$HOME
 
 EMSCRIPTEN=~/Dev/emscripten
-EMCC=$(EMSCRIPTEN)/emcc -O1 --closure 0 -s EXPORTED_FUNCTIONS="['_gzopen', '_gzread', '_gzwrite', '_gzclose']"
+EMCC=$(EMSCRIPTEN)/emcc -O2 -s EXPORTED_FUNCTIONS="['_malloc', '_free', '_gzopen', '_gzread', '_gzwrite', '_gzclose']" --pre-js pre.js --post-js post.js --minify 0
 CC=$(EMCC)
 # gcc
 
@@ -267,9 +267,9 @@ trees.lo: deflate.h zutil.h zlib.h zconf.h trees.h
 
 zee.fast.js: libz.bc
 	$(EMCC) libz.bc -o libz.fast.raw.js
-	cat pre.js > zee.fast.js
+	cat shell-pre.js > zee.fast.js
 	cat libz.fast.raw.js >> zee.fast.js
-	cat post.js >> zee.fast.js
+	cat shell-post.js >> zee.fast.js
 
 #libz.portable.js: libz.bc
 #	$(EMCC) -s USE_TYPED_ARRAYS=0 libz.bc -o libz.portable.js
