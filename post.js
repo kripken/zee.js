@@ -1,57 +1,39 @@
-  var apiTemp = Runtime.stackAlloc(4);
 
   return {
-    'compressBound': function(size) { // not that useful to export, but why not..
-      return Module['ccall']('compressBound', 'number', ['number'], [size]);
-    },
-
     'compress': function(data) { // TODO: Accept strings
-      var destSize = this['compressBound'](data.length);
-      var dest = _malloc(destSize);
-      setValue(apiTemp, destSize, 'i32');
-      var src = _malloc(data.length);
-      for (var i = 0; i < data.length; i++) {
-        setValue(src+i, unSign(data[i], 8), 'i8'); // could be much more efficient with typed arrays
-      }
-      var ret = Module['ccall']('compress', 'number', ['number', 'number', 'number', 'number'], [dest, apiTemp, src, src.length]);
-      if (ret) {
-        _free(dest);
-        _free(src);
-        throw 'zlib exception: ' + ret;
-      }
-      var actualSize = getValue(apiTemp, 'i32');
-      var buffer = [actualSize]; // encode the size at the beginning
-      for (var i = 0; i < actualSize; i++) {
-        buffer[i+1] = unSign(getValue(dest+i, 'i8'), 8); // could be much more efficient with typed arrays
-      }
-      _free(dest);
-      _free(src);
-      return buffer;
+      var gzFile = Module['ccall']('gzopen', 'number', ['string', 'string'], ['output.gz', 'wb']);
+      var buffer = _malloc(data.length);
+      HEAPU8.set(data, buffer);
+      Module['ccall']('gzwrite', 'number', ['number', 'number', 'number'], [gzFile, buffer, data.length]);
+      Module['ccall']('gzclose', 'number', ['number'], [gzFile]);
+      _free(buffer);
+      return new Uint8Array(FS.root.contents['output.gz'].contents);
+      // TODO: Delete file
     },
 
-    'uncompress': function(data) {
-      var destSize = data[0]; // the size is encoded at the beginning
-      var dest = _malloc(destSize);
-      setValue(apiTemp, destSize, 'i32');
-      var src = _malloc(data.length-1);
-      for (var i = 0; i < data.length-1; i++) {
-        setValue(src+i, unSign(data[i+1], 8), 'i8'); // could be much more efficient with typed arrays
+    'decompress': function(data) {
+      var BUFSIZE = 1024*1024;
+      FS.createDataFile('/', 'input.gz', data, true, true);
+      var gzFile = Module['ccall']('gzopen', 'number', ['string', 'string'], ['input.gz', 'rb']);
+      var buffer = _malloc(BUFSIZE);
+      var chunks = [];
+      var total = 0;
+      var len;
+      while( (len = Module['ccall']('gzread', 'number', ['number', 'number', 'number'], [gzFile, buffer, BUFSIZE])) > 0) {
+        chunks.push(new Uint8Array(len));
+        chunks[chunks.length-1].set(HEAPU8.subarray(buffer, buffer+len));
+        total += len;
       }
-      var ret = Module['ccall']('uncompress', 'number', ['number', 'number', 'number', 'number'], [dest, apiTemp, src, data.length-1]);
-      if (ret) {
-        _free(dest);
-        _free(src);
-        throw 'zlib exception: ' + ret;
+      Module['ccall']('gzclose', 'number', ['number'], [gzFile]);
+      _free(buffer);
+      var ret = new Uint8Array(total);
+      var curr = 0;
+      for (var i = 0; i < chunks.length; i++) {
+        ret.set(chunks[i], curr);
+        curr += chunks[i].length;
       }
-      var actualSize = getValue(apiTemp, 'i32');
-      assert(actualSize == destSize);
-      var buffer = [];
-      for (var i = 0; i < actualSize; i++) {
-        buffer[i] = unSign(getValue(dest+i, 'i8'), 8); // could be much more efficient with typed arrays
-      }
-      _free(dest);
-      _free(src);
-      return buffer;
+      return ret;
+      // TODO: Delete datafile
     }
   };
 })();

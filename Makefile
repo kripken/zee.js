@@ -17,7 +17,7 @@
 #    make install prefix=$HOME
 
 EMSCRIPTEN=~/Dev/emscripten
-EMCC=$(EMSCRIPTEN)/emcc -O2 --closure 0 -s EXPORTED_FUNCTIONS="['compress','uncompress','compressBound']"
+EMCC=$(EMSCRIPTEN)/emcc -O1 --closure 0 -s EXPORTED_FUNCTIONS="['_gzopen', '_gzread', '_gzwrite', '_gzclose']"
 CC=$(EMCC)
 # gcc
 

@@ -359,7 +359,7 @@ local int gz_skip(state, len)
 }
 
 /* -- see zlib.h -- */
-int ZEXPORT gzread(file, buf, len)
+int ZEXPORT __attribute__((used)) gzread(file, buf, len)
     gzFile file;
     voidp buf;
     unsigned len;

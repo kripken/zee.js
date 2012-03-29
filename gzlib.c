@@ -193,7 +193,7 @@ local gzFile gz_open(path, fd, mode)
 }
 
 /* -- see zlib.h -- */
-gzFile ZEXPORT gzopen(path, mode)
+gzFile ZEXPORT __attribute__((used)) gzopen(path, mode)
     const char *path;
     const char *mode;
 {
