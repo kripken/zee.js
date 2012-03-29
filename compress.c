@@ -59,7 +59,7 @@ int ZEXPORT compress2 (dest, destLen, source, sourceLen, level)
 
 /* ===========================================================================
  XXX remove attributes */
-int __attribute__((used)) ZEXPORT compress (dest, destLen, source, sourceLen)
+int ZEXPORT compress (dest, destLen, source, sourceLen)
     Bytef *dest;
     uLongf *destLen;
     const Bytef *source;
@@ -72,7 +72,7 @@ int __attribute__((used)) ZEXPORT compress (dest, destLen, source, sourceLen)
      If the default memLevel or windowBits for deflateInit() is changed, then
    this function needs to be updated.
  */
-uLong __attribute__((used)) ZEXPORT compressBound (sourceLen)
+uLong ZEXPORT compressBound (sourceLen)
     uLong sourceLen;
 {
     return sourceLen + (sourceLen >> 12) + (sourceLen >> 14) +

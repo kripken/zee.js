@@ -17,7 +17,8 @@
 #    make install prefix=$HOME
 
 EMSCRIPTEN=~/Dev/emscripten
-EMCC=$(EMSCRIPTEN)/emcc -O2 -s EXPORTED_FUNCTIONS="['_malloc', '_free', '_gzopen', '_gzread', '_gzwrite', '_gzclose']" --pre-js pre.js --post-js post.js --minify 0
+EMCC=$(EMSCRIPTEN)/emcc -O2 -s EXPORTED_FUNCTIONS="['_gzopen', '_gzread', '_gzwrite', '_gzclose']" --pre-js pre.js --post-js post.js
+# -s INLINING_LIMIT=0
 CC=$(EMCC)
 # gcc
 
@@ -66,7 +67,7 @@ PIC_OBJC = adler32.lo compress.lo crc32.lo deflate.lo gzclose.lo gzlib.lo gzread
 OBJA =
 PIC_OBJA =
 
-OBJS = $(OBJC) $(OBJA) empty_main.o
+OBJS = $(OBJC) $(OBJA)
 
 PIC_OBJS = $(PIC_OBJC) $(PIC_OBJA)
 
@@ -266,7 +267,7 @@ trees.lo: deflate.h zutil.h zlib.h zconf.h trees.h
 # Emscripten additions. We build a portable (no typed arrays) and a fast (with typed arrays) build.
 
 zee.fast.js: libz.bc
-	$(EMCC) libz.bc -o libz.fast.raw.js
+	$(EMCC) libz.bc empty_main.c -o libz.fast.raw.js
 	cat shell-pre.js > zee.fast.js
 	cat libz.fast.raw.js >> zee.fast.js
 	cat shell-post.js >> zee.fast.js
