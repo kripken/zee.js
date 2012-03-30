@@ -7,5 +7,10 @@ to JavaScript, by compiling the zlib C code with Emscripten.
 
 zee.js is zlib licensed, just like zlib.
 
-**NOTE: This project does not work yet!**
+
+Usage
+-----
+
+Zee.compress and Zee.decompress are the relevant functions. See test.js
+for an example.
 

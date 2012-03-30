@@ -71,7 +71,7 @@ OBJS = $(OBJC) $(OBJA)
 
 PIC_OBJS = $(PIC_OBJC) $(PIC_OBJA)
 
-all: zee.fast.js
+all: zee.js
 # libz.portable.js
 #static shared all64
 
@@ -266,11 +266,11 @@ trees.lo: deflate.h zutil.h zlib.h zconf.h trees.h
 
 # Emscripten additions. We build a portable (no typed arrays) and a fast (with typed arrays) build.
 
-zee.fast.js: libz.bc
-	$(EMCC) libz.bc empty_main.c -o libz.fast.raw.js
-	cat shell-pre.js > zee.fast.js
-	cat libz.fast.raw.js >> zee.fast.js
-	cat shell-post.js >> zee.fast.js
+zee.js: libz.bc
+	$(EMCC) libz.bc empty_main.c -o libz.raw.js
+	cat shell-pre.js > zee.js
+	cat libz.raw.js >> zee.js
+	cat shell-post.js >> zee.js
 
 #libz.portable.js: libz.bc
 #	$(EMCC) -s USE_TYPED_ARRAYS=0 libz.bc -o libz.portable.js
