@@ -271,6 +271,8 @@ zee.js: libz.bc
 	cat shell-pre.js > zee.js
 	cat libz.raw.js >> zee.js
 	cat shell-post.js >> zee.js
+	cp zee.js zee-worker.js
+	cat worker.js >> zee-worker.js
 
 #libz.portable.js: libz.bc
 #	$(EMCC) -s USE_TYPED_ARRAYS=0 libz.bc -o libz.portable.js
