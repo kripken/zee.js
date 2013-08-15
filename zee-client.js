@@ -12,7 +12,7 @@ zeeWorker.onmessage = function(msg) {
 function requestZee(filename, data, callback) {
   zeeWorker.postMessage({
     filename: filename,
-    data: data,
+    data: new Uint8Array(data), // do not send over the underlying ArrayBuffer
     callbackID: zeeCallbacks.length
   });
   zeeCallbacks.push(callback);
