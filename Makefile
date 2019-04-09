@@ -16,8 +16,7 @@
 # To install in $HOME instead of /usr/local, use:
 #    make install prefix=$HOME
 
-EMSCRIPTEN=~/Dev/emscripten
-EMCC=$(EMSCRIPTEN)/emcc -O2 -s EXPORTED_FUNCTIONS="['_gzopen', '_gzread', '_gzwrite', '_gzclose']" --pre-js pre.js --post-js post.js
+EMCC=emcc -O2 -s EXPORTED_FUNCTIONS="['_gzopen', '_gzread', '_gzwrite', '_gzclose']" --pre-js pre.js --post-js post.js
 # -s INLINING_LIMIT=0
 CC=$(EMCC)
 # gcc
