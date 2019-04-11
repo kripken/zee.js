@@ -6,8 +6,8 @@ Module['gzcompress'] = function(data) { // TODO: Accept strings
   ccall('gzwrite', 'number', ['number', 'number', 'number'], [gzFile, buffer, data.length]);
   ccall('gzclose', 'number', ['number'], [gzFile]);
   _free(buffer);
-  var ret = new Uint8Array(FS.root.contents['output.gz'].contents);
-  FS.deleteFile('output.gz');
+  var ret = FS.readFile('output.gz');
+  FS.unlink('output.gz');
   return ret;
 };
 
@@ -25,7 +25,7 @@ Module['gzdecompress'] = function(data) {
     total += len;
   }
   ccall('gzclose', 'number', ['number'], [gzFile]);
-  FS.deleteFile('input.gz');
+  FS.unlink('input.gz');
   _free(buffer);
   var ret = new Uint8Array(total);
   var curr = 0;
@@ -35,4 +35,3 @@ Module['gzdecompress'] = function(data) {
   }
   return ret;
 };
-
