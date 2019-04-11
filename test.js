@@ -1,6 +1,6 @@
-// js -m -n -e "load('zee.fast.js')" test.js
+// js test.js
 
-load('zee.js');
+Zee = require('./zee');
 
 /*
 var data = [100, 200, 200, 200, 200, 200, 200, 100, 100, 200, 200, 200, 200, 0, 1, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 1];
@@ -37,7 +37,7 @@ function byteCompare(a, b) {
 }
 
 function testSimple() {
-  print('testing simple..');
+  console.log('testing simple..');
   var data = [100, 200, 200, 200, 200, 200, 200, 100, 100, 200, 200, 200, 200, 0, 1];
   var compressed = Zee.compress(data);
   var decompressed = Zee.decompress(compressed);
@@ -47,7 +47,7 @@ function testSimple() {
 }
 
 function testBig() {
-  print('testing big..');
+  console.log('testing big..');
   var seed1 = 100;
   var seed2 = 200;
   var last = 255;
@@ -62,30 +62,30 @@ function testBig() {
     last = ret;
     return last;
   }
-  print('           ..generating data..');
+  console.log('           ..generating data..');
   var size = 1*1024*1024;
   var data = new Array(size);
   for (var i = 0; i < size; i++) {
     data[i] = fakeRandom();
   }
 
-  print('           ..compressing ' + data.length + ' bytes..');
+  console.log('           ..compressing ' + data.length + ' bytes..');
   var t = Date.now();
   var compressed = Zee.compress(data);
-  print('           ..took ' + ((Date.now() - t)/1000).toFixed(2) + ' secs');
-  print('           ..decompressing ' + compressed.length + ' bytes..');
+  console.log('           ..took ' + ((Date.now() - t)/1000).toFixed(2) + ' secs');
+  console.log('           ..decompressing ' + compressed.length + ' bytes..');
   t = Date.now();
   var decompressed = Zee.decompress(compressed);
-  print('           ..took ' + ((Date.now() - t)/1000).toFixed(2) + ' secs');
-  print('           ..got ' + decompressed.length + ' bytes..');
+  console.log('           ..took ' + ((Date.now() - t)/1000).toFixed(2) + ' secs');
+  console.log('           ..got ' + decompressed.length + ' bytes..');
 
   byteCompare(data, decompressed);
   assertNeq(data.length, compressed.length);
-  print('           ..decompressed == original');
+  console.log('           ..decompressed == original');
 }
 
 testSimple();
 testBig();
 
-print('ok.');
+console.log('ok.');
 

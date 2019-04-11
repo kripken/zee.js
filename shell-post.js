@@ -5,3 +5,5 @@
   };
 })();
 
+// Export for NodeJS
+if (typeof module == 'object') { module.exports = Zee; }
