@@ -13,7 +13,7 @@ Module['gzcompress'] = function(data) { // TODO: Accept strings
 
 Module['gzdecompress'] = function(data) {
   var BUFSIZE = 1024*1024;
-  FS.createDataFile('/', 'input.gz', data, true, true);
+  FS.writeFile('input.gz', data);
   var gzFile = ccall('gzopen', 'number', ['string', 'string'], ['input.gz', 'rb']);
   var buffer = _malloc(BUFSIZE);
   var chunks = [];
