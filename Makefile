@@ -266,7 +266,7 @@ trees.lo: deflate.h zutil.h zlib.h zconf.h trees.h
 
 # Emscripten additions. We build a portable (no typed arrays) and a fast (with typed arrays) build.
 
-zee.js: libz.bc
+zee.js: libz.bc pre.js post.js shell-pre.js shell-post.js worker.js
 	$(EMCC) libz.bc empty_main.c -o libz.raw.js
 	cat shell-pre.js > zee.js
 	cat libz.raw.js >> zee.js
