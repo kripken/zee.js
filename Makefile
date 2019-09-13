@@ -17,7 +17,7 @@
 #    make install prefix=$HOME
 
 # -s WASM=0 -s SINGLE_FILE=1: allow loading zee.js synchronously
-EMCC=emcc -O2 -s WASM=0 -s SINGLE_FILE=1 -s EXPORTED_FUNCTIONS="['_gzopen', '_gzread', '_gzwrite', '_gzclose']" --pre-js pre.js --post-js post.js
+EMCC=emcc -O2 -s WASM=0 -s SINGLE_FILE=1 -s EXPORTED_FUNCTIONS="['_gzopen', '_gzread', '_gzwrite', '_gzclose', '_gzerror', '_gzeof']" --pre-js pre.js --post-js post.js
 # -s INLINING_LIMIT=0
 CC=$(EMCC)
 # gcc

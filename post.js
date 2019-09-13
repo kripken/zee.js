@@ -24,6 +24,12 @@ Module['gzdecompress'] = function(data) {
     chunks[chunks.length-1].set(HEAPU8.subarray(buffer, buffer+len));
     total += len;
   }
+  var eof = ccall('gzeof', 'number', ['number'], [gzFile]);
+  if (len != 0 || !eof) {
+      var errnum = _malloc(4);
+      var err = ccall('gzerror', 'string', ['int', 'int'], [gzFile, errnum]);
+      console.log('Error:', err + " (" + getValue(errnum, 'i32') + ")");
+  }
   ccall('gzclose', 'number', ['number'], [gzFile]);
   FS.unlink('input.gz');
   _free(buffer);

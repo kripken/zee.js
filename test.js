@@ -84,8 +84,22 @@ function testBig() {
   console.log('           ..decompressed == original');
 }
 
+function testErrorReporting() {
+  console.log('testing error..');
+  var output = null;
+
+  consolebak = console;
+  console.log = function() { output = arguments; }
+  var decompressed = Zee.decompress(new Uint8Array([31, 139, 8, 0, 191, 28, 120, 93, 0, 3, 75, 202, 207, 203, 47, 45, 226, 2, 0, 225, 250, 205, 167, 8, 0, 0, 0]));
+  console = consolebak;
+
+  assertEq(output[0], 'Error:');
+  assertEq(output[1], 'input.gz: incorrect data check (-3)');
+}
+
 testSimple();
 testBig();
+testErrorReporting();
 
 console.log('ok.');
 
