@@ -114,7 +114,7 @@ test64: all64
 	-@rm -f foo.gz
 
 libz.bc: $(OBJS)
-	$(EMCC) $(OBJS) -o $@
+	$(EMCC) -r $(OBJS) -o $@
 	#-@ ($(RANLIB) $@ || true) >/dev/null 2>&1
 
 match.o: match.S
